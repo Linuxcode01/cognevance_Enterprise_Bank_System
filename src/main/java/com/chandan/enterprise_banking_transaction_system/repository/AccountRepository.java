@@ -1,0 +1,24 @@
+package com.chandan.enterprise_banking_transaction_system.repository;
+
+import com.chandan.enterprise_banking_transaction_system.entity.Account;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
+import java.util.Optional;
+
+@Repository
+public interface AccountRepository extends JpaRepository<Account, Long> {
+    Collection<Account> findByCustomer_CustomerCode(String customerCode);
+
+    Account findByAccountNumber(String accountNumber);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select a from Account a where a.accountNumber = :accountNumber")
+    Optional<Account> findByAccountNumberForUpdate(@Param("accountNumber") String accountNumber);
+
+}
